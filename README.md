@@ -21,6 +21,7 @@ position. Update default parameters for your setup.
 
 
 #Installation
+
 Use the the folloiwing manifest to register this Farmware https://raw.githubusercontent.com/etcipnja/Selfie/master/Selfie/manifest.json
 
 Thank you,
