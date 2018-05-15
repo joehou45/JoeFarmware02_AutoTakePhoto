@@ -20,7 +20,7 @@ Defaut values work good in case if you have (0,0,0) in the right top corner of y
 position. Update default parameters for your setup.
 
 
-#Installation
+# Installation
 
 Use the the folloiwing manifest to register this Farmware https://raw.githubusercontent.com/etcipnja/Selfie/master/Selfie/manifest.json
 
