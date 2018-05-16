@@ -47,7 +47,7 @@ class SelfieMaker(Farmware):
         except Exception as e:
             points={}
 
-        try: photo = next(x for x in self.sequences() if x['name'] == 'take a photo')
+        try: photo = next(x for x in self.sequences() if x['name'].lower() == 'take a photo')
         except: raise ValueError("Unable to find sequence TAKE A PHOTO, create one!")
 
         tr = self.args['topright']
