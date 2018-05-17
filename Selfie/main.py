@@ -86,7 +86,7 @@ class SelfieMaker(Farmware):
             y += delta[1]
 
         if tool!=None:
-            del tool['meta']['selfie_cache']
+            if 'selfie_cache' in tool['meta']: del tool['meta']['selfie_cache']
             self.post('points/{}'.format(tool['id']),tool)
 
 # ----------------------------------------------------------------------------------------------------------------------

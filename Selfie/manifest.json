@@ -3,15 +3,15 @@
  "language": "python",
  "author": "etcipnja",
  "description": "Farmbot making selfie!",
- "version": "1.0.2",
+ "version": "1.0.3",
  "min_os_version_major": 6,
  "url": "https://raw.githubusercontent.com/etcipnja/Selfie/master/Selfie/manifest.json",
  "zip": "https://github.com/etcipnja/Selfie/archive/master.zip",
  "executable": "python",
  "args": ["Selfie-master/Selfie/main.py"],
  "config": [
-  {"name": "topright", "label": "Coordinates of top right corner", "value": "(0, 130)"},
-  {"name": "bottomleft", "label": "Coordinates of bottom left corner", "value": "(2650, 1050)"},
+  {"name": "topright", "label": "Corner with min coordinates", "value": "(0, 130)"},
+  {"name": "bottomleft", "label": "Corner with max coordinates", "value": "(2650, 1050)"},
   {"name": "stepsize", "label": "Suggested step sizes", "value": "(150, 150)"},
   {"name": "default_z", "label": "default Z axis", "value": 0},
   {"name": "action", "label": "What to do (test, real)", "value": "test"}
