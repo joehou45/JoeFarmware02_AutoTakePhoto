@@ -32,5 +32,10 @@ good idea at the end of the sequence to take a single shot of each plant that ha
 
 Use the the folloiwing manifest to register this Farmware https://raw.githubusercontent.com/etcipnja/Selfie/master/Selfie/manifest.json
 
+
+Bugs:
+I noticed that if you change a parameter in WebApplication/Farmware form - you need to place focus on some other field
+before you click “RUN”. Otherwise old value is passed to farmware script even though the new value is displayed in the form.
+
 Thank you,
 Eugene

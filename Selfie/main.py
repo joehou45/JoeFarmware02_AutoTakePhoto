@@ -9,35 +9,21 @@ class SelfieMaker(Farmware):
     # ------------------------------------------------------------------------------------------------------------------
     # loads config parameters
     def load_config(self):
-        prefix = self.app_name.lower().replace('-', '_')
-        self.args={}
-        self.args['topright']       = os.environ.get(prefix + '_topright', '(0, 130)')
-        self.args['bottomleft']     = os.environ.get(prefix + '_bottomleft', '(2650, 1050)')
-        self.args['stepsize']       = os.environ.get(prefix + '_stepsize', '(150, 150)')
-        self.args['default_z']      = int(os.environ.get(prefix + '_default_z', 0))
-        self.args['action']         = os.environ.get(prefix + '_action', 'test')
 
-        try:
-            self.args['topright'] = ast.literal_eval(self.args['topright'])
-            self.args['bottomleft'] = ast.literal_eval(self.args['bottomleft'])
-            self.args['stepsize'] = ast.literal_eval(self.args['stepsize'])
+        super(SelfieMaker,self).load_config()
 
-            if not isinstance(self.args['topright'], tuple):  raise ValueError
-            if not isinstance(self.args['bottomleft'], tuple):  raise ValueError
-            if not isinstance(self.args['stepsize'], tuple):  raise ValueError
-
-        except:
-            raise ValueError("Invalid value {},{} or {}".format(self.args['topright'], self.args['bottomleft'],self.args['stepsize']))
-
-        if self.args['action'] != "real":
-            self.log("TEST MODE, NO sequences or movement will be run, meta information will NOT be updated",'warn')
-            self.debug=True
+        self.get_arg('topright', (0, 130))
+        self.get_arg('bottomleft', (2650, 1050))
+        self.get_arg('stepsize', (150, 150))
+        self.get_arg('default_z', 0)
+        self.get_arg('action', 'local')
 
         self.log(str(self.args))
 
 # ------------------------------------------------------------------------------------------------------------------
     def run(self):
 
+        self.test()
         tool=None
         try:
             watering_tool = next(x for x in self.tools() if 'water' in x['name'].lower())
@@ -88,6 +74,8 @@ class SelfieMaker(Farmware):
         if tool!=None:
             if 'selfie_cache' in tool['meta']: del tool['meta']['selfie_cache']
             self.post('points/{}'.format(tool['id']),tool)
+
+        self.move_absolute({'x': tr[0], 'y': tr[1], 'z': z})
 
 # ----------------------------------------------------------------------------------------------------------------------
 if __name__ == "__main__":
