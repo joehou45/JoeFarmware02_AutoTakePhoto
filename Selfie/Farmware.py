@@ -35,15 +35,13 @@ class Weather(object):
         l.sort(key=lambda x: s2d(x[0]),reverse=True)
         ret=""
         for r in l:
-            ret+="{} : {:.2f}mm, [{:.2f}-{:.2f}]C\n".format(r[0],r[1]['rain24'],r[1]['min_temperature'],r[1]['max_temperature'])
+            ret+="{} : {: >05.2f}mm, [{: >6.2f} -{: >6.2f}]C\n".format(r[0],r[1]['rain24'],r[1]['min_temperature'],r[1]['max_temperature'])
         return ret
     # ------------------------------------------------------------------------------------------------------------------
     def __call__(self):
         return self.weather
     # ------------------------------------------------------------------------------------------------------------------
     def load(self):
-
-        today = (datetime.datetime.utcnow() + datetime.timedelta(hours=tz)).strftime('%Y-%m-%d')
 
         try:
             weather_station = None
@@ -65,15 +63,14 @@ class Weather(object):
     # ------------------------------------------------------------------------------------------------------------------
     def save(self):
 
-        weather_station = None
         try:
             watering_tool = next(x for x in self.fw.tools() if 'water' in x['name'].lower())
             weather_station = next(x for x in self.fw.points() if x['pointer_type'] == 'ToolSlot'
                                    and x['tool_id'] == watering_tool['id'])
             weather_station['meta']['current_weather'] = str(self.weather)
-            self.fw.post('points/{}'.format(weather_station['id']), weather_station)
         except:
             raise ValueError("No watering tool detected (I save weather into the watering tool meta)")
+        self.fw.put('points/{}'.format(weather_station['id']), weather_station)
 
 
 
@@ -96,7 +93,8 @@ class Farmware(object):
             encoded_payload += '=' * (4 - len(encoded_payload) % 4)
             token = json.loads(base64.b64decode(encoded_payload).decode('utf-8'))
             self.bot_id=token['bot']
-            self.api_url = 'https:'+token['iss']+'/api/'
+            #self.api_url = 'https:'+token['iss']+'/api/'
+            self.api_url='https://my.farmbot.io/api/'
             self.mqtt_url=token['mqtt']
         except :
             print("API_TOKEN is not set, you gonna have a bad time")
@@ -160,28 +158,6 @@ class Farmware(object):
             node = {'kind': 'sync', 'args': {}}
             response = requests.post(os.environ['FARMWARE_URL'] + 'api/v1/celery_script', data=json.dumps(node),headers=self.headers)
             response.raise_for_status()
-
-    # ------------------------------------------------------------------------------------------------------------------
-    def test(self):
-
-        #self.api_token = 'eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJ1bmtub3duIiwic3ViIjozMTA1LCJpYXQiOjE1Mjc5MDcwMzEsImp0aSI6ImI5NTJiNzQ2LWYxNDItNDhhZC1iYzI0LTRlOGRjMmQ0Y2Y3OCIsImlzcyI6Ii8vbXkuZmFybWJvdC5pbzo0NDMiLCJleHAiOjE1MzEzNjMwMzEsIm1xdHQiOiJicmlzay1iZWFyLnJtcS5jbG91ZGFtcXAuY29tIiwiYm90IjoiZGV2aWNlXzMxMDEiLCJ2aG9zdCI6InZiemN4c3FyIiwibXF0dF93cyI6IndzczovL2JyaXNrLWJlYXIucm1xLmNsb3VkYW1xcC5jb206NDQzL3dzL21xdHQiLCJvc191cGRhdGVfc2VydmVyIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9mYXJtYm90L2Zhcm1ib3Rfb3MvcmVsZWFzZXMvbGF0ZXN0IiwiZndfdXBkYXRlX3NlcnZlciI6IkRFUFJFQ0FURUQiLCJpbnRlcmltX2VtYWlsIjoiZXVnZW5lLnRjaXBuamF0b3ZAZ21haWwuY29tIiwiYmV0YV9vc191cGRhdGVfc2VydmVyIjoiaHR0cHM6Ly9hcGkuZ2l0aHViLmNvbS9yZXBvcy9GYXJtQm90L2Zhcm1ib3Rfb3MvcmVsZWFzZXMvMTEyMzExMTAifQ.mWIU3ieFvQMR8U1uR8D5JMKcGaVtzr7A5boaui1qgzBV0pSOU3Vv4UH9kJSVvZYP6eY25ClyBRKNilyajevZswtv7mzdKLtaWf7O1tP_Ey6a1HbDuLh743ZiAmpkFBiJ5zry94xTwmj97gplKb8De17-VFxMugjSyvneL0LJQkMELzTSkGRzBksKZcfVtUQFn1wsTfEW4CtJM3pmJOgpDudiW6nuTd76l4cL7dtnQtdn33fMeC1VRXeE6xZe2S7VrLM_Df-naB_zhmzKJ_POgy0wxbbaBlkofUVr20LSYss3VVS2PTFY7ary9PVd5lH5sAmWs3XDheifSRUd-qV99g'
-
-        message = {
-            'kind': 'send_message',
-            'args': {
-                'message': 'Hello World!',
-                'message_type': 'success'
-            }
-        }
-        publish.single(
-            'bot/{}/from_clients'.format(self.bot_id),
-            payload=json.dumps(message),
-            hostname=self.mqtt_url,
-            auth={
-                'username': self.bot_id,
-                'password': self.api_token
-            }
-        )
 
     # ------------------------------------------------------------------------------------------------------------------
     def get(self, enpoint):

@@ -16,7 +16,7 @@ class SelfieMaker(Farmware):
         self.get_arg('bottomleft', (2650, 1050))
         self.get_arg('stepsize', (150, 150))
         self.get_arg('default_z', 0)
-        self.get_arg('action', 'local')
+        self.get_arg('action', 'real')
 
         self.log(str(self.args))
 
@@ -66,7 +66,7 @@ class SelfieMaker(Farmware):
 
                 points["({},{})".format(x,y)]=d2l(today_utc())
                 tool['meta']['selfie_cache']=str(points)
-                self.post('points/{}'.format(tool['id']), tool)
+                self.put('points/{}'.format(tool['id']), tool)
                 x += delta[0]
             y += delta[1]
 
