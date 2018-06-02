@@ -16,20 +16,23 @@ class SelfieMaker(Farmware):
         self.get_arg('bottomleft', (2650, 1050))
         self.get_arg('stepsize', (150, 150))
         self.get_arg('default_z', 0)
-        self.get_arg('action', 'real')
+        self.get_arg('action', 'local')
 
         self.log(str(self.args))
 
 # ------------------------------------------------------------------------------------------------------------------
     def run(self):
 
-        tool=None
         try:
             watering_tool = next(x for x in self.tools() if 'water' in x['name'].lower())
             tool = next(x for x in self.points() if x['pointer_type'] == 'ToolSlot' and x['tool_id'] == watering_tool['id'])
             points=ast.literal_eval(tool['meta']['selfie_cache'])
             if not isinstance(points, dict): raise ValueError
+            self.log("Selfie cache will be saved to tool id {}".format(tool['id']))
         except Exception as e:
+            tool=None
+            self.log('Watering tool is not found, selfie_cache will not be saved, if you restart the farmware - '
+                     'it will start from the beginning','warn')
             points={}
 
         try: photo = next(x for x in self.sequences() if x['name'].lower() == 'take a photo')
@@ -65,14 +68,15 @@ class SelfieMaker(Farmware):
                     self.log('{} skipped as it was already taken less than 1h ago'.format(key))
 
                 points["({},{})".format(x,y)]=d2l(today_utc())
-                tool['meta']['selfie_cache']=str(points)
-                self.put('points/{}'.format(tool['id']), tool)
+                if tool != None:
+                    tool['meta']['selfie_cache']=str(points)
+                    self.put('points/{}'.format(tool['id']), tool)
                 x += delta[0]
             y += delta[1]
 
         if tool!=None:
             if 'selfie_cache' in tool['meta']: del tool['meta']['selfie_cache']
-            self.post('points/{}'.format(tool['id']),tool)
+            self.put('points/{}'.format(tool['id']),tool)
 
         self.move_absolute({'x': tr[0], 'y': tr[1], 'z': z})
 
