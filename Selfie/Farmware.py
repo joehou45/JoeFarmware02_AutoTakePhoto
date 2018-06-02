@@ -7,7 +7,6 @@ import sys
 import math
 import time
 import base64
-import paho.mqtt.publish as publish
 
 #timezone
 tz=0

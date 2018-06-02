@@ -23,7 +23,6 @@ class SelfieMaker(Farmware):
 # ------------------------------------------------------------------------------------------------------------------
     def run(self):
 
-        self.test()
         tool=None
         try:
             watering_tool = next(x for x in self.tools() if 'water' in x['name'].lower())
